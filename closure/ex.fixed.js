@@ -1,23 +1,41 @@
-"use strict";
+function ajax(url, data, cb){
+	// ...
+}
+function partial(fn, ...args1){
+	return function (...args2){
+		return fn(args1.concat(args2));
+	}
+}
+function getCustomer(data, cb){
+	return ajax(CUSTOMER_API, data, cb)
+}
+// getCustomer({id: 42}, renderCustomer)
 
-function strBuilder(str) {
-	return function next(v){
-		if (typeof v == "string") {
-			return strBuilder(str + v);
-		}
-		return str;
-	};
+function getCurrentCustomer(cb){
+	getCustomer({id: 12}, cb)
 }
 
-var hello = strBuilder("Hello, ");
-var kyle = hello("Kyle");
-var susan = hello("Susan");
-var question = kyle("?")();
-var greeting = susan("!")();
+getCurrentCustomer(renderCustomer)
 
-console.log(strBuilder("Hello, ")("")("Kyle")(".")("")() === "Hello, Kyle.");
-console.log(hello() === "Hello, ");
-console.log(kyle() === "Hello, Kyle");
-console.log(susan() === "Hello, Susan");
-console.log(question === "Hello, Kyle?");
-console.log(greeting === "Hello, Susan!");
+// loose currying
+function curry(numofinput, fn){
+	count=0
+	return function x(...arg1){
+		count+=arg1.length
+		if(count===numofinput){
+			return fn(...arg1)
+		}
+		return function y(...arg2){
+			return x(...arg1.concat(arg2))
+		}
+	}
+}
+
+var ajax =curry(
+	3,
+	function ajax(url, data, cb){}
+)
+
+ajax(url,data)(cb)
+// or
+ajax(url)(data, cb)

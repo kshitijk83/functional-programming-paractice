@@ -5,8 +5,22 @@ function decrement(x) { return x - 1; }
 function double(x) { return x * 2; }
 function half(x) { return x / 2; }
 
-function compose() { return compose; }
-function pipe() { return pipe; }
+function compose(...fns) {
+    return function(v){
+        for(let fn of fns.reverse()){
+            v=fn(v)
+        }
+        return v
+    }
+}
+function flip(fn){
+    return function(...args){
+        return fn(...args.reverse())
+    }
+}
+function pipe(...fns) {
+    return flip(compose(...fns))
+}
 
 var f1 = compose(increment,decrement);
 var f2 = pipe(decrement,increment);
