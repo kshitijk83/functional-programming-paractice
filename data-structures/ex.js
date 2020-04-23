@@ -19,9 +19,13 @@ var filteredNumsProducts = mapObj(function(list){
 
 reduceObj(function(acc,v){
 	return acc + v;
-},0,filteredNumsProducts);
+},0,filteredNumsProducts)
 // 38886
-
+pipe(
+	curry(2, filterObj)(compose(isOdd, listSum)),
+	curry(2, mapObj)(listProduct),
+	curry(3, reduceObj)(sum)(0)
+)(nums)
 
 // ************************************
 
@@ -35,11 +39,21 @@ function mapObj(mapperFn,o) {
 }
 
 function filterObj(predicateFn,o) {
-	// TODO
+	var newObj={}
+	for(let key of Object.keys(o)){
+		if(predicateFn(o[key])){
+			newObj[key]=o[key]
+		}
+	}
+	return newObj;
 }
 
 function reduceObj(reducerFn,initialValue,o) {
-	// TODO
+	var result = initialValue
+	for(let key of Object.keys(o)){
+		result=reducerFn(result, o[key])
+	}
+	return result
 }
 
 
